@@ -126,6 +126,34 @@ def tampilkanModal():
     for row in connection.execute('SELECT * FROM modal'):
         print(row)
 
+def tambahModal():
+    global connection
+    __idModal= None
+    __tanggalModal = input("masukkan tanggal Modal: ")
+    __jumlahModal =input ("Masukkan jumlah Modal: ")
+    modal1 = Modal.modal(__idModal,__tanggalModal, __jumlahModal)
+    queryStr = f'INSERT INTO modal(tanggalModal, jumlahModal ) VALUES ("{modal1.__getTanggalModal()}", "{modal1.__getJumlahModal()}")'
+    connection.execute(queryStr)
+    connection.commit()
+
+def ubahModal():
+    global connection
+    __idModal =input("Masukkan id modal yang akan diubah: ")
+    print("=====Masukkan data baru=====")
+    __tanggalModal = input("masukkan tanggal modal: ")
+    __jumlahModal =input ("Masukkan jumlah modal: ")
+    modal1 = Modal.modal(__idModal, __tanggalModal, __jumlahModal)
+    connection.execute('UPDATE pengeluaran SET tanggalPengeluaran=?, jumlahPengeluaran=? WHERE idModal=?', (modal1.__getIdModal(), modal1.__getTanggalModal(), modal1.__getJumlahModal())) 
+    connection.commit()
+
+def deleteModal():
+    global connection
+    __idModal = input ("Masukkan id modal yang akan dihapus: ")
+    query = 'DELETE FROM modal WHERE idModal=?'
+    cur = connection.cursor()
+    cur.execute(query,(__idModal,))
+    connection.commit()
+
 def tambahPemesanan():
     global connection
     _idPemesanan = None
