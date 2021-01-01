@@ -1,11 +1,130 @@
 
 import sqlite3
+import Produk as produk
+import Pengeluaran as pengeluaran
 import modal as Modal
 import Pemesanan as pemesanan
 database = 'uas2.db'
 connection = sqlite3.connect(database)
 
+def tampilkanDataProduk():
+    global connection
+    for row in connection.execute('SELECT * FROM produk'):
+        print(row)
 
+
+def tambahDataKategoriGordenJadi():
+    global connection
+    _idProduk= None
+    _namaProduk = input("masukkan nama produk: ")
+    _jumlahProduk =int(input ("Masukkan jumlah produk: "))
+    _harga = input("Masukkan harga produk: ")
+    _warna = input("Masukkan warna: ")
+    _kategoriGordenJadi=input ("Masukkan kategori Gorden Jadi: ")
+    kategori= produk.KategoriGordenJadi(_idProduk,_namaProduk, _jumlahProduk, _harga, _warna, _kategoriGordenJadi)
+    queryStr = f'INSERT INTO produk(namaProduk, jumlahProduk,harga,warna,kategoriGordenJadi ) VALUES ("{kategori._getNamaProduk()}", "{kategori._getJumlahProduk()}","{kategori._getHarga()}","{kategori._getWarna()}","{kategori._getKategoriGordenJadi()}")'
+    connection.execute(queryStr)
+    connection.commit()
+
+def tambahDataKategoriKain():
+    global connection
+    _idProduk= None
+    _namaProduk = input("masukkan nama produk: ")
+    _jumlahProduk =int(input ("Masukkan jumlah produk: "))
+    _harga = input("Masukkan harga produk: ")
+    _warna = input("Masukkan warna: ")
+    _kategoriKain=input ("Masukkan kategori Gorden Jadi: ")
+    kategori= produk.KategoriKain(_idProduk,_namaProduk, _jumlahProduk, _harga, _warna, _kategoriKain)
+    queryStr = f'INSERT INTO produk(namaProduk, jumlahProduk,harga,warna,kategoriKain ) VALUES ("{kategori._getNamaProduk()}", "{kategori._getJumlahProduk()}","{kategori._getHarga()}","{kategori._getWarna()}","{kategori._getKategoriKain()}")'
+    connection.execute(queryStr)
+    connection.commit()
+
+def ubahDataProdukGordenJadi():
+    global connection
+    _idProduk =input("Masukkan id produk yang akan diubah: ")
+    _kategoriGordenJadi =input ("Masukkan kategori: ")
+    print("=====Masukkan data baru=====")
+    _namaProduk = input("masukkan nama produk: ")
+    _jumlahProduk =int(input ("Masukkan jumlah produk: "))
+    _harga = input("Masukkan harga produk: ")
+    _warna = input("Masukkan warna: ")
+    produk1 = produk.KategoriGordenJadi(_idProduk,_namaProduk, _jumlahProduk, _harga, _warna, _kategoriGordenJadi)
+    connection.execute('UPDATE produk SET namaProduk=?, jumlahProduk=?, harga=?, warna=? WHERE kategoriGordenJadi=? and idProduk=?', (produk1._getNamaProduk(), produk1._getJumlahProduk(), produk1._getHarga(), produk1._getWarna(), produk1._getKategoriGordenJadi(), produk1._getIdProduk())) 
+    connection.commit()
+
+def ubahDataProdukKain():
+    global connection
+    _idProduk =input("Masukkan id produk yang akan diubah: ")
+    _kategoriKain =input ("Masukkan kategori: ")
+    print("=====Masukkan data baru=====")
+    _namaProduk = input("masukkan nama produk: ")
+    _jumlahProduk =int(input ("Masukkan jumlah produk: "))
+    _harga = input("Masukkan harga produk: ")
+    _warna = input("Masukkan warna: ")
+    produk1 = produk.KategoriKain(_idProduk,_namaProduk, _jumlahProduk, _harga, _warna, _kategoriKain)
+    connection.execute('UPDATE produk SET namaProduk=?, jumlahProduk=?, harga=?, warna=? WHERE kategoriKain=? and idProduk=?', (produk1._getNamaProduk(), produk1._getJumlahProduk(), produk1._getHarga(), produk1._getWarna(), produk1._getKategoriKain(), produk1._getIdProduk())) 
+    connection.commit()
+
+def deleteProdukKategoriGordenJadi():
+    global connection
+    _idProduk = input("Masukkan id produk yang akan di hapus: ")
+    _kategoriGordenJadi = input("Masukkan kategori gorden yang akan dihapus: ")
+    query ='DELETE FROM produk WHERE idProduk=? and kategoriGordenJadi=?'
+    cur = connection.cursor()
+    cur.execute(query,(_idProduk,_kategoriGordenJadi,))
+    connection.commit()
+
+def deleteProdukKategoriKain():
+    global connection
+    _idProduk = input("Masukkan id produk yang akan di hapus: ")
+    _kategoriKain = input("Masukkan kategori kain yang akan dihapus: ")
+    query ='DELETE FROM produk WHERE idProduk=? and kategoriKain=?'
+    cur = connection.cursor()
+    cur.execute(query,(_idProduk,_kategoriKain,))
+    connection.commit()
+
+def tampilkanDataPengeluaran():
+    global connection
+    for row in connection.execute('SELECT * FROM pengeluaran'):
+        print(row)
+
+
+def tambahDataPengeluaran():
+    global connection
+    __idPengeluaran = None
+    __tanggalPengeluaran = input("masukkan tanggal pengeluaran: ")
+    __jumlahPengeluaran =input ("Masukkan jumlah pengeluaran: ")
+    __keteranganPengeluaran = input("Masukkan keterangan pengeluaran: ")
+    pengeluaran1 = pengeluaran.Pengeluaran( __idPengeluaran, __jumlahPengeluaran, __keteranganPengeluaran, __tanggalPengeluaran)
+    # connection.execute(f'INSERT INTO pengeluaran values (?,?)', ( pengeluaran1.getTanggalPengeluaran(), pengeluaran1.getJumlahPengeluaran()))
+    # connection.commit()
+    queryStr = f'INSERT INTO pengeluaran(jumlahPengeluaran, keteranganPengeluaran, tanggalPengeluaran) VALUES ("{pengeluaran1.__getJumlahPengeluaran()}", "{pengeluaran1.__getKeteranganPengeluaran()}","{pengeluaran1.__getTanggalPengeluaran()}")'
+    connection.execute(queryStr)
+    connection.commit()
+
+def ubahDataPengeluaran():
+    global connection
+    __idPengeluaran =input("Masukkan id pengeluaran yang akan diubah: ")
+    print("=====Masukkan data baru=====")
+    __tanggalPengeluaran = input("masukkan tanggal pengeluaran: ")
+    __jumlahPengeluaran =input ("Masukkan jumlah pengeluaran: ")
+    __keteranganPengeluaran = input("Masukkan keterangan pengeluaran: ")
+    pengeluaran1 = pengeluaran.Pengeluaran(__idPengeluaran, __jumlahPengeluaran, __keteranganPengeluaran, __tanggalPengeluaran)
+    connection.execute('UPDATE pengeluaran SET jumlahPengeluaran=?, keteranganPengeluaran=?, tanggalPengeluaran=? WHERE idPengeluaran=?', (pengeluaran1.__getJumlahPengeluaran(), pengeluaran1.__getKeteranganPengeluaran(), pengeluaran1.__getTanggalPengeluaran(), pengeluaran1.__getIdpengeluaran())) 
+    connection.commit()
+
+def deletePengeluaran():
+    global connection
+    __idPengeluaran = input ("Masukkan id pengeluaran yang akan dihapus: ")
+    query = 'DELETE FROM pengeluaran WHERE idPengeluaran=?'
+    cur = connection.cursor()
+    cur.execute(query,(__idPengeluaran,))
+    connection.commit()
+
+def tampilkanModal():
+    global connection
+    for row in connection.execute('SELECT * FROM modal'):
+        print(row)
 
 def tambahPemesanan():
     global connection
