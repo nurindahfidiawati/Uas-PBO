@@ -1,14 +1,18 @@
 
+
 import sqlite3
 import Produk as produk
 import Pengeluaran as pengeluaran
 import modal as Modal
 import Pemesanan as pemesanan
+import menu as Menu
+
 database = 'uas2.db'
 connection = sqlite3.connect(database)
 
 def tampilkanDataProduk():
     global connection
+    print("|idProduk|","|namaProduk|","|jumlahProduk|","|harga|","|warna|","|kategoriKain|","|kategoriGordenJadi|")
     for row in connection.execute('SELECT * FROM produk'):
         print(row)
 
@@ -85,6 +89,7 @@ def deleteProdukKategoriKain():
 
 def tampilkanDataPengeluaran():
     global connection
+    print("|idPengeluaran|","|jumlahPengeluaran|","|keteranganPengeluaran|","|tanggalPengeluaran|")
     for row in connection.execute('SELECT * FROM pengeluaran'):
         print(row)
 
@@ -123,8 +128,37 @@ def deletePengeluaran():
 
 def tampilkanModal():
     global connection
+    print("|idModal|","|jumlahModal|","|tanggalModal|")
     for row in connection.execute('SELECT * FROM modal'):
         print(row)
+
+def tambahModal():
+    global connection
+    __idModal= None
+    __tanggalModal = input("masukkan tanggal Modal: ")
+    __jumlahModal =input ("Masukkan jumlah Modal: ")
+    modal1 = Modal.modal(__idModal,__tanggalModal, __jumlahModal)
+    queryStr = f'INSERT INTO modal(tanggalModal, jumlahModal ) VALUES ("{modal1.__getTanggalModal()}", "{modal1.__getJumlahModal()}")'
+    connection.execute(queryStr)
+    connection.commit()
+
+def ubahModal():
+    global connection
+    __idModal =input("Masukkan id modal yang akan diubah: ")
+    print("=====Masukkan data baru=====")
+    __tanggalModal = input("masukkan tanggal modal: ")
+    __jumlahModal =input ("Masukkan jumlah modal: ")
+    modal1 = Modal.modal(__idModal, __tanggalModal, __jumlahModal)
+    connection.execute('UPDATE pengeluaran SET tanggalPengeluaran=?, jumlahPengeluaran=? WHERE idModal=?', (modal1.__getIdModal(), modal1.__getTanggalModal(), modal1.__getJumlahModal())) 
+    connection.commit()
+
+def deleteModal():
+    global connection
+    __idModal = input ("Masukkan id modal yang akan dihapus: ")
+    query = 'DELETE FROM modal WHERE idModal=?'
+    cur = connection.cursor()
+    cur.execute(query,(__idModal,))
+    connection.commit()
 
 def tambahPemesanan():
     global connection
@@ -190,6 +224,7 @@ def tambahPembelian():
 
 def tampilkanPemesanan():
     global connection
+    print("|idPemesanan|","|tanggalPemesanan|","|namaPembeli|","|noHpPembeli|","|alamatPemasangan|","|status|","|idProduk|","|jumlahPemesanan|")
     for row in connection.execute('SELECT * FROM pemesanan JOIN produk on produk.idProduk = pemesanan.idProduk'):
         print(row)    
        
@@ -212,136 +247,150 @@ def tampilkanOmset():
     for row in connection.execute('SELECT s.jumlahPemesanan * p.harga AS TotalHarga FROM produk p JOIN pemesanan s ON p.idProduk = s.idProduk'):
         print ("Rp.",row[0])
     
+person1 = Menu.masuk()
+person1.setUserPass("anggi", "Anggi")
 
-while True:
-    print("============Pilihan Menu============")
-    print("""
-        1. Menu Produk
-        2. Menu Pemesanan
-        3. Menu Modal
-        4. Menu Keuangan
-        5. Keluar
-    """)
-    pilihan = int(input('Pilihan: '))
-    if pilihan == 1:
-        while True:
-            print("__________Menu Produk__________")
-            print("""
-            1. Menampilkan data produk
-            2. Menambahkan data produk gorden 
-            3. Menambahkan data produk kain
-            4. Mengubah data produk gorden
-            5. Mengubah data produk kain
-            6. Menghapus data produk gorden
-            7. Menghapus data produk kain
-            8. Keluar
-            """)
-            pilihan = int(input('Pilihan: '))
-
-            if (pilihan == 1):
-                tampilkanDataProduk()
-            elif(pilihan == 2):
-                tambahDataKategoriGordenJadi()
-            elif(pilihan == 3):
-                tambahDataKategoriKain()
-            elif(pilihan == 4):
-                ubahDataProdukGordenJadi()
-            elif(pilihan == 5):
-                ubahDataProdukKain()
-            elif(pilihan == 6):
-                deleteProdukKategoriGordenJadi()
-            elif(pilihan == 7):
-                deleteProdukKategoriKain()
-            elif(pilihan == 8):
-                break
-            else:
-                print("Menu tidak tersedia")
-    
-    elif pilihan == 2:
-        while True:
-            print("__________Menu Pemesanan__________")
-            print("""
-            1. Menambahkan data pemesanan
-            2. Menambahkan data pembelian
-            3. Menampilkan data pemesanan
-            4. Menampilkan data pembelian
-            5. Mengubah data pemesanan
-            6. Keluar
-            """)
-            pilihan = int(input('Pilihan: '))
-
-            if (pilihan == 1):
-                tambahPemesanan()
-            elif (pilihan == 2):
-                tambahPembelian()
-            elif (pilihan == 3):
-                tampilkanPemesanan()
-            elif (pilihan == 4):
-                tampilkanPembelian()
-            elif (pilihan == 5):
-                ubahPemesanan()
-            elif (pilihan == 6):
-                break
-            else:
-                print("Menu tidak tersedia")
-    
-    elif pilihan == 3:
-        while True:
-            print("__________Menu Modal__________")
-            print("""
-            
-            1. Menambahkan data modal
-            2. Mengubah data modal
-            3. Menampilkan data modal
-            4. Menghapus modal
-            5. Keluar
+benar1 = person1.getPassword()
+benar2 = person1.getUserName()
+ulang = True
+if ulang == True:
+    while True:
+        masuk2 =input("masukkan userName: ")
+        masuk1 =input("masukkan password: ")
+        if (masuk2 != benar2) and (masuk1 != benar1):
+            print("username atau password tidak valid")
+        
+        else: 
+            ulang = False
+            while True:
+                print("============Pilihan Menu============")
+                print("""
+                    1. Menu Produk
+                    2. Menu Pemesanan
+                    3. Menu Modal
+                    4. Menu Keuangan
+                    5. Keluar
                 """)
-            pilihan = int(input('Pilihan: '))
+                pilihan = int(input('Pilihan: '))
+                if pilihan == 1:
+                    while True:
+                        print("__________Menu Produk__________")
+                        print("""
+                        1. Menampilkan data produk
+                        2. Menambahkan data produk gorden 
+                        3. Menambahkan data produk kain
+                        4. Mengubah data produk gorden
+                        5. Mengubah data produk kain
+                        6. Menghapus data produk gorden
+                        7. Menghapus data produk kain
+                        8. Keluar
+                        """)
+                        pilihan = int(input('Pilihan: '))
 
-            if (pilihan == 1):
-                tambahModal()
-            elif(pilihan == 2):
-                ubahModal()
-            elif(pilihan == 3):
-                tampilkanModal()
-            elif (pilihan == 4):
-                deleteModal()
-            elif (pilihan == 5):
-                break
-            else:
-                print("Menu tidak tersedia")
-    
-    elif pilihan == 4:
-        while True:
-            print("__________Menu Keuangan__________")
-            print("""
-            1. Menambahkan data pengeluaran
-            2. Mengubah data pengeluaran
-            3. Melihat data pengeluaran
-            4. Menghapus pengeluaran
-            5. Menampilkan omset
-            6. Keluar
-                """)
-            pilihan = int(input('Pilihan: '))
+                        if (pilihan == 1):
+                            tampilkanDataProduk()
+                        elif(pilihan == 2):
+                            tambahDataKategoriGordenJadi()
+                        elif(pilihan == 3):
+                            tambahDataKategoriKain()
+                        elif(pilihan == 4):
+                            ubahDataProdukGordenJadi()
+                        elif(pilihan == 5):
+                            ubahDataProdukKain()
+                        elif(pilihan == 6):
+                            deleteProdukKategoriGordenJadi()
+                        elif(pilihan == 7):
+                            deleteProdukKategoriKain()
+                        elif(pilihan == 8):
+                            break
+                        else:
+                            print("Menu tidak tersedia")
+                
+                elif pilihan == 2:
+                    while True:
+                        print("__________Menu Pemesanan__________")
+                        print("""
+                        1. Menambahkan data pemesanan
+                        2. Menambahkan data pembelian
+                        3. Menampilkan data pemesanan
+                        4. Menampilkan data pembelian
+                        5. Mengubah data pemesanan
+                        6. Keluar
+                        """)
+                        pilihan = int(input('Pilihan: '))
 
-            if (pilihan == 1):
-                tambahDataPengeluaran()
-            elif (pilihan == 2):
-                ubahDataPengeluaran()
-            elif (pilihan == 3):
-                tampilkanDataPengeluaran()
-            elif (pilihan ==4):
-                deletePengeluaran()
-            elif (pilihan == 5):
-                tampilkanOmset()
-            elif (pilihan == 6):
-                break
-            else:
-                print("Menu tidak tersedia")
-    elif pilihan == 5:
-        break
-    else:
-        print("Menu tidak tersedia")
+                        if (pilihan == 1):
+                            tambahPemesanan()
+                        elif (pilihan == 2):
+                            tambahPembelian()
+                        elif (pilihan == 3):
+                            tampilkanPemesanan()
+                        elif (pilihan == 4):
+                            tampilkanPembelian()
+                        elif (pilihan == 5):
+                            ubahPemesanan()
+                        elif (pilihan == 6):
+                            break
+                        else:
+                            print("Menu tidak tersedia")
+                
+                elif pilihan == 3:
+                    while True:
+                        print("__________Menu Modal__________")
+                        print("""
+                        
+                        1. Menambahkan data modal
+                        2. Mengubah data modal
+                        3. Menampilkan data modal
+                        4. Menghapus modal
+                        5. Keluar
+                            """)
+                        pilihan = int(input('Pilihan: '))
+
+                        if (pilihan == 1):
+                            tambahModal()
+                        elif(pilihan == 2):
+                            ubahModal()
+                        elif(pilihan == 3):
+                            tampilkanModal()
+                        elif (pilihan == 4):
+                            deleteModal()
+                        elif (pilihan == 5):
+                            break
+                        else:
+                            print("Menu tidak tersedia")
+                
+                elif pilihan == 4:
+                    while True:
+                        print("__________Menu Keuangan__________")
+                        print("""
+                        1. Menambahkan data pengeluaran
+                        2. Mengubah data pengeluaran
+                        3. Melihat data pengeluaran
+                        4. Menghapus pengeluaran
+                        5. Menampilkan omset
+                        6. Keluar
+                            """)
+                        pilihan = int(input('Pilihan: '))
+
+                        if (pilihan == 1):
+                            tambahDataPengeluaran()
+                        elif (pilihan == 2):
+                            ubahDataPengeluaran()
+                        elif (pilihan == 3):
+                            tampilkanDataPengeluaran()
+                        elif (pilihan ==4):
+                            deletePengeluaran()
+                        elif (pilihan == 5):
+                            tampilkanOmset()
+                        elif (pilihan == 6):
+                            break
+                        else:
+                            print("Menu tidak tersedia")
+                elif pilihan == 5:
+                    break
+                else:
+                    print("Menu tidak tersedia")
 
 
 
